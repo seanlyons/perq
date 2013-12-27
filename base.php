@@ -32,11 +32,6 @@
             return o;
         }
         
-        function input_onblur() {
-            console.log('blurry!');
-            console.log(this);
-        }
-        
         function formsubmit() {
             wordslist = new Array();
             words = document.getElementById('words').elements;
@@ -165,7 +160,7 @@ echo "<span id='letters' style='font-size:30px;'>$display</span>";
     for ($i = 3; $i <= 10; $i++) {
         for ($j = 1; $j <= 5; $j++) {
 ?>
-        <input type='text' id='inp_<?PHP echo $i; ?>_<?PHP echo $j; ?>' onblur="input_onblur(); style='position:absolute; top:<?PHP echo ((($j - 1) * 30) + 70); ?>px; left:<?PHP echo  (($i - 3) * 200) + 10; ?>px;'>
+        <input type='text' id='inp_<?PHP echo $i; ?>_<?PHP echo $j; ?>' style='position:absolute; top:<?PHP echo ((($j - 1) * 30) + 70); ?>px; left:<?PHP echo  (($i - 3) * 200) + 10; ?>px;'>
 <?PHP
         }
     }
