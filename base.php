@@ -1,12 +1,14 @@
 <html>
     <script>
-        var count=181;
-        var counter=setInterval(timer, 1000); //1000 will  run it every 1 second    
+        var currentFocus;
+        var count = 181;
+        var counter = setInterval(timer, 1000); //1000 will  run it every 1 second    
+
         function timer() {
-            count=count-1;
+            count--;
             if (count <= 0) {
                 clearInterval(counter);
-                document.getElementById("timer").innerHTML = 'Timer exhausted.'; // watch for spelling
+                document.getElementById("timer").innerHTML = 'Timer exhausted.';
                 console.log('Your turn is over!');
                 formsubmit();
                 return;
@@ -14,8 +16,8 @@
             secs = ("0" + Math.floor(count % 60)).slice(-2);
             remaining = Math.floor(count/60) + ":" + secs + ' remaining';
             document.getElementById("timer").innerHTML = remaining; // watch for spelling
-        }    
-    
+        }
+
         function anagramify() {
             var text = document.getElementById("letters").innerHTML;
             split = text.split("");
@@ -32,15 +34,74 @@
             return o;
         }
         
+        function input_onfocus(id) {
+            document.getElementById( 'valid_' + id ).style.background = 'orange';
+        }
+        
+        function input_onblur(ele) {
+            value = ele.value;
+            id = ele.id;
+            
+            if ( ! value) {
+                return;
+            }
+            color = (is_word_valid(value)) ? 'green' : 'red';
+            v = 'valid_' + id;
+            document.getElementById(v).style.background = color;
+        }
+
+        function is_word_valid(word) {
+            word = word.toUpperCase();
+            text = document.getElementById("letters").innerHTML;
+            for( i = 0; i < word.length; i++)
+            {
+                //ch is the Nth character in the word
+                ch = word.charAt(i);
+                //Now we have to locate that character in `text` and remove it, or throw an error.
+                position = text.indexOf(ch);
+                if (position == -1) {
+console.log('position = '+ position +' on ch = '+ ch +' for text = '+ text);
+                    return false;
+                } else {
+                    slice1 = text.slice(0, position);
+                    slice2 = text.slice(position + 1, text.length);
+                    text = slice1 + slice2;
+                }
+            }
+            return true;        
+        }
+        
+        function delegate_words() {
+            mi = document.getElementById('mi').value;
+            if ( ! mi ) {
+                return false;
+            }
+            document.getElementById("mi").value = '';
+            if ( ! is_word_valid(mi)) {
+                return false;
+            }            
+            //Word is valid; let's insert it into the appropriate spot.
+            row = mi.length;
+            for (i = 1; i <= 5; i++) {
+                id = "inp_"+row+'_'+i;
+console.log('id = ' + id);
+                val = document.getElementById( id ).value;
+                if ( ! val ) {
+                    document.getElementById(id).value = mi;
+                    document.getElementById("valid_" + id ).style.background = 'green';
+                    return false;
+                }
+            }
+            return false;
+            
+        }
+        
         function formsubmit() {
             wordslist = new Array();
             words = document.getElementById('words').elements;
             for (i = 0; i < words.length; i++) {
                 //Iterate through all of the ids, getting their row+col values.
                 if (words[i]['value']) {
-                    init = words[i]['id'].slice(4);
-                    // row = init.slice( -1 );
-                    // col = init.slice(0, init.indexOf("_"));
                     console.log('oh hello, ' + words[i]['value'] );
                     wordslist.push(words[i]['value']);
                 }
@@ -109,7 +170,7 @@ console.log(base+'+ ('+col+' * '+mult+') = '+score);
 </html>
 
 <?PHP
-$black = array(
+$black_dice = array(
     'MOCOWP',
     'EEAAAE',
     'UNTFPI',
@@ -121,7 +182,7 @@ $black = array(
     'KRHBIT',
     'MRISGU',
 );
-$red = array(
+$red_dice = array(
     'BPNHFL',
     'SVWYQS',
     'KCGMJD',
@@ -130,37 +191,54 @@ $red = array(
 //Display the letters on the dice.
 $i = 0;
 $display = '';
-foreach ($black as $b) {
+foreach ($black_dice as $b) {
     $i++;
     $display .= substr($b, mt_rand(0, 5), 1);
 }
 $i = 0;
 if (isset($_GET['red'])) {
-    foreach ($red as $r) {
+    $red = TRUE;
+}
+if (isset($red)) {
+    foreach ($red_dice as $r) {
         $i++;
-        $display .= substr($r, mt_rand(0, 5), 1);
+        $letter = substr($r, mt_rand(0, 5), 1);
+        $display .= $letter;
     }
 }
 echo "<span id='letters' style='font-size:30px;'>$display</span>";
 
 //Build out the input form.
 ?>
-&nbsp;<button id="anagram" onclick="anagramify()" >&#8634;</button>
+&nbsp;
+<button style="position:relative; bottom:5px;" id="anagram" onclick="anagramify()" >
+    &#8634;
+</button>
+
+<form id='master_input' onsubmit="return delegate_words();">
+    <input type='text' id='mi' style='position:absolute; top:13px; left:260px;'>
+    <button id="delegate_submit" style='position:absolute; top:13px; left:400px;'>Delegate!</button>
+</form>
+
 <?PHP 
-    for ($i = 3; $i <= 10; $i++) {
+    $i = (isset($red)) ? 4 : 3;
+    for (; $i <= 10; $i++) {
 ?>
         <span type='text'  id='inp_head' style='position:absolute; top:40px; left:<?PHP echo ((($i - 3) * 197) + 45); ?>px;'><?PHP echo $i; ?> letters</span>
 <?PHP
     }
 ?>
-<span id="timer"></span>
+<span id="timer" style="float:right; background:cyan; "></span>
 
 <form id='words' onsubmit="return formsubmit();">
 <?PHP
-    for ($i = 3; $i <= 10; $i++) {
+    $i = (isset($red)) ? 4 : 3;
+    for (; $i <= 10; $i++) {
         for ($j = 1; $j <= 5; $j++) {
+            $id = 'inp_'.$i.'_'.$j;
 ?>
-        <input type='text' id='inp_<?PHP echo $i; ?>_<?PHP echo $j; ?>' style='position:absolute; top:<?PHP echo ((($j - 1) * 30) + 70); ?>px; left:<?PHP echo  (($i - 3) * 200) + 10; ?>px;'>
+        <input type='text' id='<?PHP echo $id; ?>' onfocus="input_onfocus(this.id);" onblur="input_onblur(this);" style='position:absolute; top:<?PHP echo ((($j - 1) * 30) + 70); ?>px; left:<?PHP echo  (($i - 3) * 200) + 10; ?>px;'>
+        <div style="width:10px; height:10px; background:orange; position:absolute; top:<?PHP echo ((($j - 1) * 30) + 75); ?>px; left:<?PHP echo  (($i - 3) * 200) + 165; ?>px;" class='validation_box' id='valid_<?PHP echo $id; ?>'></div>
 <?PHP
         }
     }
