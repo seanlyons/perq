@@ -1,0 +1,64 @@
+#anagram {
+	position:relative;
+	bottom:5px;
+}
+
+#master_input #mi {
+	position:absolute;
+	top:13px;
+	left:260px;
+}
+#master_input #delegate_submit {
+	position:absolute;
+	top:13px;
+	left:400px;
+}
+
+#inp_head {
+	position:absolute;
+	top:40px;
+}
+
+#timer {
+	position:absolute;
+	top:1px;
+	right:0px;
+	background:cyan; 
+	font:15px;
+}
+
+.words_input {
+	position:absolute;
+}
+
+.validation_box {
+	width:10px;
+	height:10px;
+	background:orange;
+	position:absolute;
+}
+
+#score_button {
+	position:absolute;
+	top:220px;
+	left:1500px;
+}
+
+#reset {
+	position:absolute;
+	top:220px;
+	left:1412px;
+}
+
+#next_turn {
+	position:absolute;
+	top:220px;
+	left:1270px;
+}
+
+#words_you_missed {
+	position:absolute;
+	top:280px;
+	left:10px;
+	background:#EEA;
+}
