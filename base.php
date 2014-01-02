@@ -1,16 +1,18 @@
 <html>
     <script>
         var currentFocus;
-        var count = 181;
+        var count = 2;
         var counter = setInterval(timer, 1000); //1000 will  run it every 1 second    
-
+        var columns_filled = new Array();
+        
         function timer() {
             count--;
             if (count <= 0) {
                 clearInterval(counter);
                 document.getElementById("timer").innerHTML = 'Timer exhausted.';
-                console.log('Your turn is over!');
                 formsubmit();
+				console.log('calling get_words_you_missed:');
+				get_words_you_missed();
                 return;
             }
             secs = ("0" + Math.floor(count % 60)).slice(-2);
@@ -95,20 +97,45 @@ console.log('id = ' + id);
             return false;
             
         }
+
+		function get_words_you_missed() {
+			console.log('yay here0');
+			var xhReq = new XMLHttpRequest();
+			console.log('yay here1');
+			xhReq.open("GET", "http://sean.hexault.com/perquackey/get_anagram_words.php?abcasdwe", true);
+			console.log('yay here2');
+			xhReq.send({'foo':'bar'});
+			console.log('yay here3');
+			var serverResponse = xhReq.responseText;
+			console.log('yay here4');
+			console.log(serverResponse); // Shows "15"
+		
+		
+		
+			missed = new Array();//ajax request to /get_anagram_words.php
+			gotten = getWordsArray();
+			// for (i = 0; i < missed.length; i++) {
+			
+			return missed;			
+		}
         
         function formsubmit() {
             wordslist = new Array();
-            words = document.getElementById('words').elements;
-            for (i = 0; i < words.length; i++) {
-                //Iterate through all of the ids, getting their row+col values.
-                if (words[i]['value']) {
-                    console.log('oh hello, ' + words[i]['value'] );
-                    wordslist.push(words[i]['value']);
-                }
-            }
+			wordslist = getWordsArray();
             score = parseWordslist( wordslist );
             return false;
         }
+		
+		function getWordsArray() {
+            words = document.getElementById('words').elements;
+            for (i = 0; i < words.length; i++) {
+                //Iterate through all of the ids, getting their row+col values.
+                if (words[i]['id'].slice(0, 4) != 'inp_' && words[i]['value']) {
+                    wordslist.push(words[i]['value']);
+                }
+            }
+			return wordslist;
+		}
         
         function parseWordslist( w ) {
             quant_letters = 0;
@@ -132,40 +159,47 @@ console.log('id = ' + id);
         }
         
         function getScore( row, col ) {
-            score = 0;
             base = 0;
-            mult = 0;
+            add = 0;
             if (row == 3) {
                 base = 50;
-                mult = 10;
+                add = 10;
             } else if (row == 4) {
                 base = 100;
-                mult = 20;
+                add = 20;
             } else if (row == 5) {
                 base = 150;
-                mult = 50;
+                add = 50;
             } else if (row == 6) {
                 base = 200;
-                mult = 100;
+                add = 100;
             } else if (row == 7) {
                 base = 350;
-                mult = 150;
+                add = 150;
             } else if (row == 8) {
                 base = 500;
-                mult = 250;
+                add = 250;
             } else if (row == 9) {
                 base = 500;
-                mult = 1000;
+                add = 1000;
             } else if (row == 10) {
                 base = 0;
-                mult = 1500;
+                add = 1500;
             }
-            score = base + (col * mult);
-console.log(base+'+ ('+col+' * '+mult+') = '+score);
-            return score;
+            if (row == 1) {
+                return base;
+            } else {
+                return add;
+            }
+            //TODO: add bonuses.
         }
 
-        
+		// Array Remove - By John Resig (MIT Licensed)
+		Array.prototype.remove = function(from, to) {
+		  var rest = this.slice((to || from) + 1 || this.length);
+		  this.length = from < 0 ? this.length + from : from;
+		  return this.push.apply(this, rest);
+		};        
     </script>
 </html>
 
@@ -247,3 +281,4 @@ echo "<span id='letters' style='font-size:30px;'>$display</span>";
     <input type="reset" style='position:absolute; top:220px; left:1412px;' value="Reset!">
     <input type="reset" id="next_turn" style='position:absolute; top:220px; left:1270px;' value="Next Turn" onclick="reload()">
 </form>
+<div id='wordsyoumissed'></div>
