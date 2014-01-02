@@ -1,4 +1,6 @@
 <html>
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
     <script>
         var currentFocus;
         var count = 2;
@@ -12,7 +14,8 @@
                 document.getElementById("timer").innerHTML = 'Timer exhausted.';
                 formsubmit();
 				console.log('calling get_words_you_missed:');
-				get_words_you_missed();
+				missed = get_words_you_missed();
+				build_out_missed(missed);
                 return;
             }
             secs = ("0" + Math.floor(count % 60)).slice(-2);
@@ -62,7 +65,6 @@
                 //Now we have to locate that character in `text` and remove it, or throw an error.
                 position = text.indexOf(ch);
                 if (position == -1) {
-console.log('position = '+ position +' on ch = '+ ch +' for text = '+ text);
                     return false;
                 } else {
                     slice1 = text.slice(0, position);
@@ -86,7 +88,6 @@ console.log('position = '+ position +' on ch = '+ ch +' for text = '+ text);
             row = mi.length;
             for (i = 1; i <= 5; i++) {
                 id = "inp_"+row+'_'+i;
-console.log('id = ' + id);
                 val = document.getElementById( id ).value;
                 if ( ! val ) {
                     document.getElementById(id).value = mi;
@@ -98,25 +99,26 @@ console.log('id = ' + id);
             
         }
 
+		function build_out_missed( missed ) {
+			split = jQuery.parseJSON(missed);
+			miss_string = '';
+			console.log(split);
+			for (var i in split) {
+				miss_string = miss_string + split[i] + '<br/>'
+			}
+			console.log(miss_string);
+			document.getElementById("wordsyoumissed").innerHTML = miss_string;
+		}
+		
 		function get_words_you_missed() {
-			console.log('yay here0');
-			var xhReq = new XMLHttpRequest();
-			console.log('yay here1');
-			xhReq.open("GET", "http://sean.hexault.com/perquackey/get_anagram_words.php?abcasdwe", true);
-			console.log('yay here2');
-			xhReq.send({'foo':'bar'});
-			console.log('yay here3');
-			var serverResponse = xhReq.responseText;
-			console.log('yay here4');
-			console.log(serverResponse); // Shows "15"
-		
-		
-		
-			missed = new Array();//ajax request to /get_anagram_words.php
-			gotten = getWordsArray();
-			// for (i = 0; i < missed.length; i++) {
-			
-			return missed;			
+			letters = document.getElementById("letters").innerHTML;
+
+			return $.ajax({ type: "GET",
+				url: "perquackey/get_anagram_words.php?" + letters,
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				async: false
+			}).responseText;
 		}
         
         function formsubmit() {
@@ -281,4 +283,4 @@ echo "<span id='letters' style='font-size:30px;'>$display</span>";
     <input type="reset" style='position:absolute; top:220px; left:1412px;' value="Reset!">
     <input type="reset" id="next_turn" style='position:absolute; top:220px; left:1270px;' value="Next Turn" onclick="reload()">
 </form>
-<div id='wordsyoumissed'></div>
+<div id='wordsyoumissed' style='position:absolute; top:280px; left:10px; background:#EEA'></div>
