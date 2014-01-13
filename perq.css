@@ -1,3 +1,50 @@
+	input[type="text"],
+	.validation_box {
+		/* position:relative;*/
+
+	}
+	input[type="text"] {
+		width:35px;
+		margin-left:20px;
+	}
+	.col_div {
+		display:inline-block;
+	}
+	.j_1,
+	.j_2,
+	.j_3,
+	.j_4,
+	.j_5 {
+		top:60px;
+	}
+	
+	#col_3 {
+		left:200px;
+	}
+	#col_4 {
+		left:350px;
+	}
+	#col_5 {
+		left:500px;
+	}
+	#col_6 {
+		left:650px;
+	}
+	#col_7 {
+		left:800px;
+	}
+	#col_8 {
+		left:950px;
+	}
+	#col_9 {
+		left:1100px;
+	}
+	#col_10 {
+		left:1250px;
+	}
+
+/**********************************************/
+/*
 #anagram {
 	position:relative;
 	bottom:5px;
@@ -36,19 +83,19 @@
 	height:10px;
 	background:orange;
 	position:absolute;
-}
-
+}*/
+/*
 #score_button {
 	position:absolute;
 	top:220px;
 	left:1500px;
-}
+}*/
 
 #reset {
 	position:absolute;
 	top:220px;
 	left:1412px;
-}
+}*/
 
 #next_turn {
 	position:absolute;

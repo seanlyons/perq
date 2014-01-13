@@ -70,13 +70,16 @@ echo "<span id='letters' style='font-size:30px;'>$display</span>";
 <?PHP
     $i = (isset($red)) ? 4 : 3;
     for (; $i <= 10; $i++) {
+		echo "<div id='col_$i' class='col_div'>";
+
         for ($j = 1; $j <= 5; $j++) {
-            $id = 'inp_'.$i.'_'.$j;
+			$ij = "j_$j";
 ?>
-        <input class='words_input' type='text' id='<?PHP echo $id; ?>' onfocus="input_onfocus(this.id);" onblur="input_onblur(this);" style='top:<?PHP echo ((($j - 1) * 30) + 70); ?>px; left:<?PHP echo  (($i - 3) * 200) + 10; ?>px;'>
-        <div style="top:<?PHP echo ((($j - 1) * 30) + 75); ?>px; left:<?PHP echo  (($i - 3) * 200) + 165; ?>px;" class='validation_box' id='valid_<?PHP echo $id; ?>'></div>
+        <input class='<?PHP echo $ij; ?>' type='text' onfocus="input_onfocus(this.id);" onblur="input_onblur(this);" value='<?PHP echo $ij; ?>'>
+        <div class='validation_box v_j_<?PHP echo $j;?>'></div>
 <?PHP
         }
+		echo '</div>';
     }
 ?>
     <button id="score_button">Rescore!</button>
